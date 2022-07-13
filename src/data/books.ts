@@ -1,7 +1,7 @@
 import { Book } from "../types/types";
 import { nanoid } from "nanoid";
 
-const books: Book[] = [
+export const books: Book[] = [
   {
     id: nanoid(6),
     name: "Of Mice and Men",
@@ -18,7 +18,7 @@ const books: Book[] = [
     id: nanoid(6),
     name: "Slaughterhouse Five",
     pages: 240,
-    isCheckedOut: true,
+    isCheckedOut: false,
   },
   {
     id: nanoid(6),
@@ -30,6 +30,6 @@ const books: Book[] = [
     id: nanoid(6),
     name: "The Hobbit",
     pages: 360,
-    isCheckedOut: true,
+    isCheckedOut: false,
   },
 ];

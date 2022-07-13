@@ -1,11 +1,11 @@
 import { nanoid } from "nanoid";
 
-const users = [
+export const users = [
   {
     id: nanoid(5),
     name: "Tom",
     address: "123 Main St",
-    booksCheckedOut: [],
+    booksCheckedOut: ["One Flew Over the Cuckoo's Nest", "Of Mice and Men"],
   },
   {
     id: nanoid(5),
@@ -29,6 +29,6 @@ const users = [
     id: nanoid(5),
     name: "Erica",
     address: "808 Morningside",
-    booksCheckedOut: [],
+    booksCheckedOut: ["Goodnight Moon"],
   },
 ];

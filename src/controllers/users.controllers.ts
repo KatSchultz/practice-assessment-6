@@ -1,8 +1,66 @@
 import { Request, Response } from "express";
+import { nanoid } from "nanoid";
 import { User } from "../types/types";
+import { users } from "../data/users";
 
-class UserController {
+export class UserController {
   allUsers(req: Request, res: Response) {
-    res.status(200).json();
+    if (req.query.minBooksCheckedOut) {
+      console.log(req.query.minBooksCheckedOut);
+      const minBookArr = users.filter(
+        (user) =>
+          user.booksCheckedOut.length >= Number(req.query.minBooksCheckedOut)
+      );
+      return res.status(200).json(minBookArr);
+    }
+
+    res.status(200).json(users);
+  }
+
+  getSingleUser(req: Request, res: Response) {
+    const user = users.find((user) => user.id === req.params.id);
+
+    if (!user)
+      return res
+        .status(404)
+        .json({ error: `User with id ${req.params.id} not found` });
+
+    return res.status(200).json(user);
+  }
+
+  addUser(req: Request, res: Response) {
+    const newUser = { id: nanoid(5), ...req.body };
+
+    users.push(newUser);
+
+    res.status(201).json(newUser);
+  }
+
+  updateUser(req: Request, res: Response) {
+    let user = users.find((user) => user.id === req.params.id);
+
+    if (!user)
+      return res
+        .status(404)
+        .json({ error: `User with id ${req.params.id} not found` });
+
+    user = { ...user, ...req.body };
+
+    return res.status(200).json(user);
+  }
+
+  deleteUser(req: Request, res: Response) {
+    let userIndex = users.findIndex((user) => user.id === req.params.id);
+
+    if (!userIndex)
+      return res
+        .status(404)
+        .json({ error: `User with id ${req.params.id} not found` });
+
+    users.splice(userIndex, 1);
+
+    res.status(204).json();
   }
 }
+
+export const userController = new UserController();
