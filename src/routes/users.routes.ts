@@ -10,3 +10,5 @@ userRouter
   .get(userController.getSingleUser)
   .patch(userController.updateUser)
   .delete(userController.deleteUser);
+
+userRouter.route("/:id/books").get(userController.checkUserBooks);

@@ -1,20 +1,20 @@
 import { Request, Response } from "express";
 import { books } from "../data/books";
 import { nanoid } from "nanoid";
+import { users } from "../data/users";
+import { Book, User } from "../types/types";
 
 class BookController {
   allBooks(req: Request, res: Response) {
-    if (req.query.isCheckedOut === "true") {
-      console.log(Boolean(req.query.isCheckedOut));
-      const minBookArr = books.filter((book) => book.isCheckedOut);
-      return res.status(200).json(minBookArr);
+    if (req.query.isCheckedOut) {
+      if (req.query.isCheckedOut === "true") {
+        const minBookArr = books.filter((book) => book.isCheckedOut);
+        return res.status(200).json(minBookArr);
+      } else {
+        const minBookArr = books.filter((book) => !book.isCheckedOut);
+        return res.status(200).json(minBookArr);
+      }
     }
-    if (req.query.isCheckedOut === "false") {
-      console.log(req.query.isCheckedOut);
-      const minBookArr = books.filter((book) => book.isCheckedOut);
-      return res.status(200).json(minBookArr);
-    }
-    console.log("get all books");
 
     res.status(200).json(books);
   }
@@ -31,7 +31,7 @@ class BookController {
   }
 
   addBook(req: Request, res: Response) {
-    const newBook = { id: nanoid(5), ...req.body };
+    const newBook = { id: nanoid(6), ...req.body };
 
     books.push(newBook);
 
@@ -39,7 +39,8 @@ class BookController {
   }
 
   updateBook(req: Request, res: Response) {
-    let book = books.find((user) => user.id === req.params.id);
+    let bookIndex = books.findIndex((book) => book.id === req.params.id);
+    let book = books[bookIndex];
 
     if (!book)
       return res
@@ -47,14 +48,15 @@ class BookController {
         .json({ error: `Book with id ${req.params.id} not found` });
 
     book = { ...book, ...req.body };
+    books.splice(bookIndex, 1, book);
 
     return res.status(200).json(book);
   }
 
-  deleteUser(req: Request, res: Response) {
+  deleteBook(req: Request, res: Response) {
     let bookIndex = books.findIndex((book) => book.id === req.params.id);
 
-    if (!bookIndex)
+    if (bookIndex === -1)
       return res
         .status(404)
         .json({ error: `Book with id ${req.params.id} not found` });
@@ -62,6 +64,44 @@ class BookController {
     books.splice(bookIndex, 1);
 
     res.status(204).json();
+  }
+
+  userCheckoutBook(req: Request, res: Response) {
+    const bookId = req.params.id;
+    const userId = req.params.userId;
+    const bookIndex = books.findIndex((book) => book.id === bookId);
+
+    let book = books[bookIndex];
+    book = { ...book, ...req.body };
+    books.splice(bookIndex, 1, book);
+
+    let user = users.find((user) => user.id === userId);
+    if (user) {
+      user.booksCheckedOut = [...user.booksCheckedOut, bookId];
+    }
+    res.status(200).json(book);
+  }
+
+  userCheckInBook(req: Request, res: Response) {
+    console.log(req.params);
+    const bookId = req.params.id;
+    const userId = req.params.userId;
+    const bookIndex = books.findIndex((book) => book.id === bookId);
+
+    let book = books[bookIndex];
+    book = { ...book, ...req.body };
+    books.splice(bookIndex, 1, book);
+
+    let user = users.find((user) => user.id === userId);
+    if (user) {
+      let userBookIndex = user.booksCheckedOut.findIndex(
+        (elem) => elem === bookId
+      );
+      user.booksCheckedOut.splice(userBookIndex, 1);
+    }
+
+    console.log(book);
+    res.status(200).json(book);
   }
 }
 

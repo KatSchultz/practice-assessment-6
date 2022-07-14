@@ -37,7 +37,8 @@ export class UserController {
   }
 
   updateUser(req: Request, res: Response) {
-    let user = users.find((user) => user.id === req.params.id);
+    const userIndex = users.findIndex((user) => user.id === req.params.id);
+    let user = users[userIndex];
 
     if (!user)
       return res
@@ -45,14 +46,16 @@ export class UserController {
         .json({ error: `User with id ${req.params.id} not found` });
 
     user = { ...user, ...req.body };
+    users.splice(userIndex, 1, user);
 
     return res.status(200).json(user);
   }
 
   deleteUser(req: Request, res: Response) {
+    console.log(req.params);
     let userIndex = users.findIndex((user) => user.id === req.params.id);
-
-    if (!userIndex)
+    console.log("userindex: ", userIndex);
+    if (userIndex === -1)
       return res
         .status(404)
         .json({ error: `User with id ${req.params.id} not found` });
@@ -60,6 +63,17 @@ export class UserController {
     users.splice(userIndex, 1);
 
     res.status(204).json();
+  }
+
+  checkUserBooks(req: Request, res: Response) {
+    const user = users.find((user) => user.id === req.params.id);
+
+    if (!user)
+      return res
+        .status(404)
+        .json({ error: `User with id ${req.params.id} not found` });
+
+    return res.status(200).json(user.booksCheckedOut);
   }
 }
 

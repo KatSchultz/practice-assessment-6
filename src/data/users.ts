@@ -14,6 +14,12 @@ export const users = [
     booksCheckedOut: [],
   },
   {
+    id: "testUser",
+    name: "For Easy Testing",
+    address: "12 Easy St",
+    booksCheckedOut: ["testBook"],
+  },
+  {
     id: nanoid(5),
     name: "Chris",
     address: "555 Sunnyside",

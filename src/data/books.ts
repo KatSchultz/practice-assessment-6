@@ -3,6 +3,12 @@ import { nanoid } from "nanoid";
 
 export const books: Book[] = [
   {
+    id: "testBook",
+    name: "For Easy Testing",
+    pages: 190,
+    isCheckedOut: true,
+  },
+  {
     id: nanoid(6),
     name: "Of Mice and Men",
     pages: 190,
